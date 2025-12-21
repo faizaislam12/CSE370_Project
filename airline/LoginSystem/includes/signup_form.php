@@ -1,7 +1,7 @@
 <?php
 require_once 'signup_view.inc.php';
 require_once 'config_session.inc.php';
-?>
+
 
 
 <!DOCTYPE html>
@@ -42,6 +42,7 @@ require_once 'config_session.inc.php';
 </body>
 </html>
 
-<?php
+
    check_signup_errors();
   ?>
+
