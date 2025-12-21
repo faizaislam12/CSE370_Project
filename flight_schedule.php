@@ -1,8 +1,5 @@
-
-
- <?php
+<?php
     include "connection.php";
-    // require_once('cse370_projecto/database.php');
     $que = "SELECT * FROM flight";
     $result = mysqli_query($con, $que);
 ?>
@@ -106,4 +103,3 @@
         }
     }
  ?>
-
