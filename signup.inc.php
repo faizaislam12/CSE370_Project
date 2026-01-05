@@ -57,30 +57,27 @@
       }
 
       
-$userId = $pdo->lastInsertId();
-
 if (str_contains($email, 'admin')) {
-    // This is an admin, so we add them to the subclass table
-    create_user( $pdo,  $username, $pwd,  $email);
-    create_admin($pdo, $userId); 
-} 
-else  {
-
-    create_passenger($pdo, $username, $pwd, $email, null, null);
-}
-
-if (str_contains($email, 'admin')) {
+    create_user($pdo, $username, $pwd, $email); // Create first
+    $userId = $pdo->lastInsertId();             // Get ID second
+    create_admin($pdo, $userId);                // Link subclass third
     header("Location: /sam/admin_dashboard.php");
-    exit; 
-}
-// else if (str_contains($result['email'], 'crew')) {
-//     header("Location: \airline\crew.php?login=success");
-//     exit;
-// } 
+    exit();
+} else {
+    // This handles both 'users' and 'passenger' tables internally
+    create_passenger($pdo, $username, $pwd, $email, null, null);
+    
+    // Manually set session so they don't have to log in again after signing up
+    $result = get_user($pdo, $username);
+    $_SESSION['user_id'] = $result['id'];
 
-else {
-    header("Location: /sam/passenger_dashboard.php");
-    exit;
+    if (isset($_SESSION['pending_booking'])) {
+        header("Location: booking.php");
+        exit();
+    } else {
+        header("Location: /sam/passenger_dashboard.php");
+        exit();
+    }
 }
       
       $pdo = null;
@@ -97,6 +94,7 @@ else {
     header("Location:/signup_form.php");
     die();
  }
+
 
 
 
