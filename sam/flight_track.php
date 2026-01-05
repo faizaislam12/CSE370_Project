@@ -6,7 +6,7 @@ $now = date('Y-m-d H:i:s');
 echo "Now = $now <br>";
 
 // SPAWN: Uses all four columns to build accurate DATETIME strings
-$spawn_sql = "INSERT INTO flight_track (flight_id, speed, altitude, longitude, latitude, pt_status, heading)
+$ft_sql = "INSERT INTO flight_track (flight_id, speed, altitude, longitude, latitude, pt_status, heading)
               SELECT f.flight_id, 450, 35000, a.longitude, a.latitude, 'En Route', 0
               FROM flight f
               JOIN airport a ON f.source = a.airport_id
@@ -19,7 +19,7 @@ $spawn_sql = "INSERT INTO flight_track (flight_id, speed, altitude, longitude, l
               AND f.flight_id NOT IN (SELECT flight_id FROM flight_track)";
 
 
-if (!$conn->query($spawn_sql)) {
+if (!$conn->query($ft_sql)) {
     die("Spawn Error: " . $conn->error);
 }
 
@@ -193,3 +193,4 @@ if ($check_flights && $check_flights->num_rows > 0) {
 
 </body>
 </html>
+
