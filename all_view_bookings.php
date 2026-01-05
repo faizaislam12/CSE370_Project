@@ -18,6 +18,10 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: /sam/login_form.php");
     exit();
 }
+if (!isset($_GET['resume']) && !isset($_POST['submit_booking'])) {
+    header("Location: all_view_home.php");
+    exit();
+}
 $message = "";
 $user_id = $_SESSION['user_id'];
 
@@ -181,6 +185,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
 </body>
 
 </html>
+
 
 
 
