@@ -22,12 +22,14 @@ if (isset($_GET['flight_id'])) {
     $f_id = (int)$_GET['flight_id'];
     $s_label = $_GET['seat'];
     $final_price = (float)$_GET['price'];
-    $r_id        = (int)($_GET['rule_id']) ? (int)$_GET['rule_id'] : 0;
+    $r_id = isset($_GET['rule_id']) ? (int)$_GET['rule_id'] : 0;
 } elseif (isset($_SESSION['pending_booking'])) {
     $f_id  =        (int)$_SESSION['pending_booking']['flight_id'];
     $s_label =      $_SESSION['pending_booking']['seat'];
     $final_price = (float)$_SESSION['pending_booking']['price'];
-    $r_id        = (int)($_SESSION['rule_id']) ? (int)$_SESSION['rule_id'] : 0;
+     $r_id = isset($_SESSION['pending_booking']['rule_id']) ? (int)$_SESSION['pending_booking']['rule_id'] : 0;
+}else {
+    $f_id = $s_label = $r_id = $final_price = 0;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
@@ -52,37 +54,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
     if (!$t_id) {
         $message = "<div class='alert alert-danger'>Error: No aircraft assigned to this flight yet.</div>";
     } else {
-        // 3. CHECK IF PASSENGER EXISTS (BY PASSPORT) OR CREATE NEW
-        // $check_p = mysqli_query($con, "SELECT user_id, status FROM passenger WHERE passport_number = '$p_passport'");
-        
-        // if (mysqli_num_rows($check_p) > 0) {
-        //     $p_data = mysqli_fetch_assoc($check_p);
-        //     $p_id = $p_data['user_id'];
-        //     $p_status = $p_data['status'];
-        // } else {
-            // Create New Passenger
-            $upd_p = "UPDATE passenger 
-          SET passport_number = '$p_passport', 
-              phone = '$p_phone', 
-              d_o_b = '$p_dob', 
-              status = 'Active' 
-          WHERE user_id = '$user_id'"; // Or WHERE user_id = '$p_id'
+            $upd_p = "UPDATE passenger SET
+                      passport_number = '$p_passport', 
+                      phone = '$p_phone', 
+                      d_o_b = '$p_dob', 
+                      status = 'Active' 
+                      WHERE user_id = '$user_id'";
 
             mysqli_query($con, $upd_p);
-        // }
 
-        // 4. BLACKLIST CHECK
+
         $check_status = mysqli_query($con, "SELECT status FROM passenger WHERE user_id = '$user_id'");
         $status_data = mysqli_fetch_assoc($check_status);
         $p_status = $status_data['status'] ?? 'Active';
         if ($p_status == 'Blacklisted') {
             $message = "<div class='alert alert-danger'>Booking Failed: Your account is currently restricted.</div>";
         } else {
-            // --- START TRANSACTION ---
+          
             mysqli_begin_transaction($con);
             try {
                 $b_date = date('Y-m-d');
-                $pr_id = 1; // Default pricing group
+                $pr_id = 7; 
                 $default_admin_id = 1;
 
                 // Insert Booking
@@ -103,6 +95,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
                 mysqli_stmt_execute($stmt2);
 
                 mysqli_commit($con);
+                unset($_SESSION['pending_booking']); 
+                
                 $message = "<div class='alert alert-success'>Success! Your seat $s_label is reserved. Reference: $txn_ref. Please proceed to payment.</div>";
             } catch (Exception $e) {
                 mysqli_rollback($con);
@@ -183,4 +177,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
 </body>
 
 </html>
+
 
