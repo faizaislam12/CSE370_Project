@@ -58,11 +58,18 @@
 
       
 if (str_contains($email, 'admin')) {
-    create_user($pdo, $username, $pwd, $email); // Create first
-    $userId = $pdo->lastInsertId();             // Get ID second
-    create_admin($pdo, $userId);                // Link subclass third
+    create_user($pdo, $username, $pwd, $email);
+    $userId = $pdo->lastInsertId();
+    create_admin($pdo, $userId);
+
+
+    unset($_SESSION['pending_booking']);
+    unset($_SESSION['booking_resumed']);
+
     header("Location: /sam/admin_dashboard.php");
     exit();
+}
+
 } else {
     // This handles both 'users' and 'passenger' tables internally
     create_passenger($pdo, $username, $pwd, $email, null, null);
@@ -96,6 +103,7 @@ if (str_contains($email, 'admin')) {
     header("Location:/signup_form.php");
     die();
  }
+
 
 
 
