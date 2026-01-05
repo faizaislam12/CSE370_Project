@@ -45,18 +45,15 @@ if ($_SERVER["REQUEST_METHOD"]==="POST"){
       $_SESSION["last_regeneration"] = time();
       
 
-if (str_contains($result['email'], 'admin')) {
+if (isset($_SESSION['pending_booking'])) {
+    header("Location: all_view_booking.php"); // Return to booking
+    exit();
+} else if (str_contains($result['email'], 'admin')) {
     header("Location: /sam/admin_dashboard.php");
-    exit; 
-}
-// else if (str_contains($result['email'], 'crew')) {
-//     header("Location: \airline\crew.php?login=success");
-//     exit;
-// } 
-
-else {
+    exit();
+} else {
     header("Location: /sam/passenger_dashboard.php");
-    exit;
+    exit();
 }
       
       $pdo = null;
@@ -73,4 +70,5 @@ else{
     header("Location: /sam/login_form.php");
     die();
   }
+
 ?>
