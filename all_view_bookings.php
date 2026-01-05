@@ -22,12 +22,12 @@ if (isset($_GET['flight_id'])) {
     $f_id = (int)$_GET['flight_id'];
     $s_label = $_GET['seat'];
     $final_price = (float)$_GET['price'];
-    $r_id        = ($_GET['rule_id']) ? (int)$_GET['rule_id'] : 0;
+    $r_id        = (int)($_GET['rule_id']) ? (int)$_GET['rule_id'] : 0;
 } elseif (isset($_SESSION['pending_booking'])) {
-    $f_id = (int)$_SESSION['pending_booking']['flight_id'];
-    $s_label = $_SESSION['pending_booking']['seat'];
+    $f_id  =        (int)$_SESSION['pending_booking']['flight_id'];
+    $s_label =      $_SESSION['pending_booking']['seat'];
     $final_price = (float)$_SESSION['pending_booking']['price'];
-    $r_id        = ($_SESSION['rule_id']) ? (int)$_SESSION['rule_id'] : 0;
+    $r_id        = (int)($_SESSION['rule_id']) ? (int)$_SESSION['rule_id'] : 0;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
                 $sql = "INSERT INTO booking (booking_status, booking_date, template_id, seat_label, flight_id, user_id, price_id, rule_id) 
                         VALUES ('Pending', ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = mysqli_prepare($con, $sql);
-                mysqli_stmt_bind_param($stmt, "sisiiii", $b_date, $t_id, $s_label, $f_id, $p_id, $pr_id, $r_id);
+                mysqli_stmt_bind_param($stmt, "sisiiii", $b_date, $t_id, $s_label, $f_id, $user_id, $pr_id, $r_id);
                 mysqli_stmt_execute($stmt);
                 
                 $new_booking_id = mysqli_insert_id($con);
@@ -183,3 +183,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
 </body>
 
 </html>
+
