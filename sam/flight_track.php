@@ -22,7 +22,7 @@ if (!$conn->query($ft_sql)) {
     die("Spawn Error: " . $conn->error);
 }
 
-// LAND: Uses all four columns to determine landing time
+
 $land_sql = "DELETE FROM flight_track 
              WHERE flight_id IN (
                 SELECT flight_id FROM flight f
@@ -192,5 +192,6 @@ if ($check_flights && $check_flights->num_rows > 0) {
 
 </body>
 </html>
+
 
 
