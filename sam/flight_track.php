@@ -5,7 +5,6 @@ date_default_timezone_set('Asia/Dhaka');
 $now = date('Y-m-d H:i:s');
 echo "Now = $now <br>";
 
-// SPAWN: Uses all four columns to build accurate DATETIME strings
 $ft_sql = "INSERT INTO flight_track (flight_id, speed, altitude, longitude, latitude, pt_status, heading)
               SELECT f.flight_id, 450, 35000, a.longitude, a.latitude, 'En Route', 0
               FROM flight f
@@ -193,4 +192,5 @@ if ($check_flights && $check_flights->num_rows > 0) {
 
 </body>
 </html>
+
 
