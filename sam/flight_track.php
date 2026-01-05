@@ -10,11 +10,9 @@ $ft_sql = "INSERT INTO flight_track (flight_id, speed, altitude, longitude, lati
               FROM flight f
               JOIN airport a ON f.source = a.airport_id
               WHERE 
-                -- Combine Departure Date and Time
-                CONCAT(f.scheduled_date, ' ', f.standard_dep_time) <= '$now' 
-                AND 
-                -- Combine Arrival Date and Time
-                CONCAT(f.scheduled_arr_date, ' ', f.standard_arr_time) > '$now'
+              CONCAT(f.scheduled_date, ' ', f.standard_dep_time) <= '$now' 
+              AND 
+              CONCAT(f.scheduled_arr_date, ' ', f.standard_arr_time) > '$now'
               AND f.flight_id NOT IN (SELECT flight_id FROM flight_track)";
 
 
@@ -192,6 +190,7 @@ if ($check_flights && $check_flights->num_rows > 0) {
 
 </body>
 </html>
+
 
 
 
