@@ -72,8 +72,10 @@ if (str_contains($email, 'admin')) {
     $_SESSION['user_id'] = $result['id'];
 
     if (isset($_SESSION['pending_booking'])) {
-        header("Location: booking.php");
-        exit();
+    $_SESSION['booking_resumed'] = true;
+    header("Location: /sam/all_view_bookings.php?resume=1");
+    exit();
+
     } else {
         header("Location: /sam/passenger_dashboard.php");
         exit();
@@ -94,6 +96,7 @@ if (str_contains($email, 'admin')) {
     header("Location:/signup_form.php");
     die();
  }
+
 
 
 
