@@ -1,7 +1,7 @@
 <?php
+ob_start();
 session_start();
 include "connection.php";
-
 
 if (!isset($_SESSION['user_id'])) {
     if (isset($_GET['flight_id'])) {
@@ -11,6 +11,7 @@ if (!isset($_SESSION['user_id'])) {
             'price'     => $_GET['price'] ?? 0,
             'rule_id'   => $_GET['rule_id'] ?? 0
         ];
+         session_write_close();
     }
     header("Location: /sam/login_form.php?error=login_required");
     exit();
@@ -27,9 +28,10 @@ if (isset($_GET['flight_id'])) {
     $f_id  =        (int)$_SESSION['pending_booking']['flight_id'];
     $s_label =      $_SESSION['pending_booking']['seat'];
     $final_price = (float)$_SESSION['pending_booking']['price'];
-     $r_id = isset($_SESSION['pending_booking']['rule_id']) ? (int)$_SESSION['pending_booking']['rule_id'] : 0;
+     $r_id =  (int)$_SESSION['pending_booking']['rule_id'] : 0;
 }else {
-    $f_id = $s_label = $r_id = $final_price = 0;
+    header("Location: all_view_home.php");
+    exit();
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
@@ -177,6 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
 </body>
 
 </html>
+
 
 
 
