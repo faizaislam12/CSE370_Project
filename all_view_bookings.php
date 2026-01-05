@@ -1,20 +1,34 @@
 <?php
+session_start();
 include "connection.php";
 
-$message = "";
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /sam/login_form.php");
+    if (isset($_GET['flight_id'])) {
+        $_SESSION['pending_booking'] = [
+            'flight_id' => $_GET['flight_id'],
+            'seat'      => $_GET['seat'] ?? '',
+            'price'     => $_GET['price'] ?? 0,
+            'rule_id'   => $_GET['rule_id'] ?? 0
+        ];
+    }
+    header("Location: /sam/login_form.php?error=login_required");
     exit();
 }
-
+$message = "";
 $user_id = $_SESSION['user_id'];
 
-// 1. CAPTURE DATA FROM THE SEAT SELECTION PAGE (URL PARAMETERS)
-$f_id        = isset($_GET['flight_id']) ? (int)$_GET['flight_id'] : 0;
-$s_label     = $_GET['seat'] ?? '';
-$r_id        = isset($_GET['rule_id']) ? (int)$_GET['rule_id'] : 0;
-$final_price = isset($_GET['price']) ? (float)$_GET['price'] : 0.00;
+if (isset($_GET['flight_id'])) {
+    $f_id = (int)$_GET['flight_id'];
+    $s_label = $_GET['seat'];
+    $final_price = (float)$_GET['price'];
+    $r_id        = ($_GET['rule_id']) ? (int)$_GET['rule_id'] : 0;
+} elseif (isset($_SESSION['pending_booking'])) {
+    $f_id = (int)$_SESSION['pending_booking']['flight_id'];
+    $s_label = $_SESSION['pending_booking']['seat'];
+    $final_price = (float)$_SESSION['pending_booking']['price'];
+    $r_id        = ($_SESSION['rule_id']) ? (int)$_SESSION['rule_id'] : 0;
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
     // Collect Passenger Info
@@ -167,4 +181,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
 </div>
 
 </body>
+
 </html>
