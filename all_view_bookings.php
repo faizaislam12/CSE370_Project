@@ -8,17 +8,17 @@ include "connection.php";
 if (!isset($_SESSION['user_id'])) {
     if (isset($_GET['flight_id'])) {
         $_SESSION['pending_booking'] = [
-            'flight_id' => $_GET['flight_id'],
+            'flight_id' => (int)$_GET['flight_id'],
             'seat'      => $_GET['seat'] ?? '',
-            'price'     => $_GET['price'] ?? 0,
-            'rule_id'   => $_GET['rule_id'] ?? 0
+            'price'     => (float)$_GET['price'] ?? 0,
+            'rule_id'   => (int)$_GET['rule_id'] ?? 0
         ];
         $_SESSION['resume_booking'] = true;
     }
     header("Location: /sam/login_form.php");
     exit();
 }
-if (!isset($_GET['resume']) && !isset($_POST['submit_booking'])) {
+if ( !isset($_SESSION['booking_resumed']) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: all_view_home.php");
     exit();
 }
@@ -29,7 +29,7 @@ if (isset($_GET['flight_id'])) {
     $f_id = (int)$_GET['flight_id'];
     $s_label = $_GET['seat'];
     $final_price = (float)$_GET['price'];
-    $r_id = isset($_GET['rule_id']) ? (int)$_GET['rule_id'] : 0;
+    $r_id = (int)($_GET['rule_id']) ? (int)$_GET['rule_id'] : 0;
 } elseif (isset($_SESSION['pending_booking'])) {
     $f_id  =        (int)$_SESSION['pending_booking']['flight_id'];
     $s_label =      $_SESSION['pending_booking']['seat'];
@@ -39,6 +39,7 @@ if (isset($_GET['flight_id'])) {
     header("Location: all_view_home.php");
     exit();
 }
+unset($_SESSION['pending_booking']);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
     // Collect Passenger Info
@@ -185,6 +186,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
 </body>
 
 </html>
+
 
 
 
