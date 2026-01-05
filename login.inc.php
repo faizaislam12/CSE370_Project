@@ -45,9 +45,14 @@ if ($_SERVER["REQUEST_METHOD"]==="POST"){
       $_SESSION["last_regeneration"] = time();
       
 
-if (isset($_SESSION['resume_booking'])) {
-    unset($_SESSION['resume_booking']);
-    header("Location: booking.php?resume=1");
+$redirectTo = $_POST['redirect_to'] ?? null;
+
+// 2. Perform a security check (ensure it's a local path starting with /)
+$isSafe = ($redirectTo && strpos($redirectTo, '/') === 0 && strpos($redirectTo, '//') !== 0);
+
+if ($isSafe) {
+    // Redirect back to the booking page (or wherever they came from)
+    header("Location: " . $redirectTo);
     exit();
 } else if (str_contains($result['email'], 'admin')) {
     header("Location: /sam/admin_dashboard.php");
@@ -73,4 +78,5 @@ else{
   }
 
 ?>
+
 
