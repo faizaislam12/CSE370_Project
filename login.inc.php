@@ -45,8 +45,9 @@ if ($_SERVER["REQUEST_METHOD"]==="POST"){
       $_SESSION["last_regeneration"] = time();
       
 
-if (isset($_SESSION['pending_booking'])) {
-    header("Location: all_view_booking.php"); // Return to booking
+if (isset($_SESSION['resume_booking'])) {
+    unset($_SESSION['resume_booking']);
+    header("Location: booking.php?resume=1");
     exit();
 } else if (str_contains($result['email'], 'admin')) {
     header("Location: /sam/admin_dashboard.php");
@@ -72,3 +73,4 @@ else{
   }
 
 ?>
+
