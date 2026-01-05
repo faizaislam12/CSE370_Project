@@ -62,7 +62,7 @@ $has_delays = $delay_data['delay_count'] > 0;
             <span class="text-white me-3 d-none d-md-inline">
                 Welcome, <strong><?php echo htmlspecialchars($_SESSION['user_username'] ?? 'Passenger'); ?></strong>
             </span>
-            <a href="all_view_home.php" class="btn btn-sm btn-outline-light rounded-pill px-3">Logout</a>
+            <a href="logout.inc.php" class="btn btn-sm btn-outline-light rounded-pill px-3">Logout</a>
         </div>
     </nav>
 

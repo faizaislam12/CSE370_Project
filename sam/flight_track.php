@@ -5,22 +5,25 @@ date_default_timezone_set('Asia/Dhaka');
 $now = date('Y-m-d H:i:s');
 echo "Now = $now <br>";
 
-$ft_sql = "INSERT INTO flight_track (flight_id, speed, altitude, longitude, latitude, pt_status, heading)
+// SPAWN: Uses all four columns to build accurate DATETIME strings
+$spawn_sql = "INSERT INTO flight_track (flight_id, speed, altitude, longitude, latitude, pt_status, heading)
               SELECT f.flight_id, 450, 35000, a.longitude, a.latitude, 'En Route', 0
               FROM flight f
               JOIN airport a ON f.source = a.airport_id
               WHERE 
-              CONCAT(f.scheduled_date, ' ', f.standard_dep_time) <= '$now' 
-              AND 
-              CONCAT(f.scheduled_arr_date, ' ', f.standard_arr_time) > '$now'
+                -- Combine Departure Date and Time
+                CONCAT(f.scheduled_date, ' ', f.standard_dep_time) <= '$now' 
+                AND 
+                -- Combine Arrival Date and Time
+                CONCAT(f.scheduled_arr_date, ' ', f.standard_arr_time) > '$now'
               AND f.flight_id NOT IN (SELECT flight_id FROM flight_track)";
 
 
-if (!$conn->query($ft_sql)) {
+if (!$conn->query($spawn_sql)) {
     die("Spawn Error: " . $conn->error);
 }
 
-
+// LAND: Uses all four columns to determine landing time
 $land_sql = "DELETE FROM flight_track 
              WHERE flight_id IN (
                 SELECT flight_id FROM flight f
@@ -190,7 +193,3 @@ if ($check_flights && $check_flights->num_rows > 0) {
 
 </body>
 </html>
-
-
-
-

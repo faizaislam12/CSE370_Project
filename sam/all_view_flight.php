@@ -11,6 +11,8 @@
             ORDER BY f.scheduled_date ASC";
             
     $result = mysqli_query($con, $que);
+
+    
 ?>
 
 <!DOCTYPE html>

@@ -5,5 +5,5 @@ session_unset();
 session_destroy();
 
 
-header("Location:/sam/all_view_flight.php");
+header("Location:/sam/all_view_home.php");
 die();

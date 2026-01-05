@@ -1,19 +1,25 @@
 <?php
-
+// 1. SESSION START MUST BE THE VERY FIRST LINE
 session_start();
 
-
+// 2. INCLUDE DATABASE (Ensure this file defines $con or $conn)
 require_once "database.php"; 
 
-
+/** * SAFETY CHECK: If $conn isn't defined in database.php but $con is, 
+ * we fix it here so the rest of the script doesn't crash.
+ */
 if (!isset($conn) && isset($con)) {
     $conn = $con;
 }
 
-
+/**
+ * 3. SECURITY CHECK
+ * We check if the user is logged in. 
+ * If you haven't set up Roles yet, we allow user_id 1 to act as Admin.
+ */
 if (!isset($_SESSION['user_id'])) {
-
-    header("Location: /login_form.php");
+    // If not logged in at all, redirect to login
+    header("Location: login.php");
     exit();
 }
 
@@ -139,5 +145,4 @@ $current_admin_id = $_SESSION['user_id'];
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

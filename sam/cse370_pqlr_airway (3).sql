@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 04, 2026 at 01:26 AM
+-- Generation Time: Jan 05, 2026 at 10:16 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -28,10 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `admin` (
-  `admin_id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -39,8 +36,8 @@ CREATE TABLE `admin` (
 -- Dumping data for table `admin`
 --
 
-INSERT INTO `admin` (`admin_id`, `name`, `email`, `password`, `created_at`) VALUES
-(1, 'Ahmad Raza', 'ahmad.raza@airline.com', '$2y$10$eImiTXuWVxfM37uY4JANjO.o5.A.11.V/I11', '2026-01-02 22:55:00');
+INSERT INTO `admin` (`user_id`, `created_at`) VALUES
+(1, '2026-01-05 17:47:32');
 
 -- --------------------------------------------------------
 
@@ -61,7 +58,8 @@ CREATE TABLE `aircraft` (
 --
 
 INSERT INTO `aircraft` (`aircraft_id`, `tail_num`, `model`, `template_id`, `last_update`) VALUES
-(4, '3', 'MOTOR', 10, '0000-00-00 00:00:00');
+(4, '9', 'MOTOR', 10, '2026-01-04 22:36:49'),
+(5, 'F789OK', 'Boeing 895-753', 20, '2026-01-04 22:37:19');
 
 -- --------------------------------------------------------
 
@@ -84,7 +82,9 @@ CREATE TABLE `airport` (
 --
 
 INSERT INTO `airport` (`airport_id`, `name`, `country`, `city`, `IATA_Code`, `longitude`, `latitude`) VALUES
-(10, 'King Abdul Aziz Airp', 'Saudi Arab', 'Jeddah', 'KSA', 90.25, 80.25);
+(10, 'King Abdul Aziz Airp', 'Saudi Arab', 'jeddah', 'KSA', 45.0792, 23.8859),
+(12, 'XYZ Airport', 'China', 'gdf', 'CHN', 104.195, 35.8617),
+(13, 'Heathrow Airport', 'United Kin', 'London', 'LON', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -107,8 +107,7 @@ CREATE TABLE `baggage` (
 --
 
 INSERT INTO `baggage` (`baggage_id`, `flight_id`, `passenger_name`, `tag_number`, `status`, `weight`, `created_at`) VALUES
-(1, 12, 'fai', '4586', 'Damaged', 30.00, '2026-01-03 22:52:26'),
-(2, 12, 'fai', '5896', 'Checked-in', 30.00, '2026-01-03 22:53:03');
+(1, 12, 'fai', '4586', 'Damaged', 30.00, '2026-01-03 22:52:26');
 
 -- --------------------------------------------------------
 
@@ -130,7 +129,8 @@ CREATE TABLE `baggage_claims` (
 --
 
 INSERT INTO `baggage_claims` (`claim_id`, `baggage_id`, `claim_type`, `description`, `claim_status`, `created_at`) VALUES
-(1, 1, 'Lost', 'laaa', 'Pending', '2026-01-03 22:52:38');
+(1, 1, 'Lost', 'laaa', 'Pending', '2026-01-03 22:52:38'),
+(2, 1, 'Damaged', '', 'Pending', '2026-01-04 21:10:22');
 
 -- --------------------------------------------------------
 
@@ -141,17 +141,10 @@ INSERT INTO `baggage_claims` (`claim_id`, `baggage_id`, `claim_type`, `descripti
 CREATE TABLE `blacklist` (
   `blacklist_id` int(11) NOT NULL,
   `passenger_name` varchar(255) NOT NULL,
-  `passport_number` varchar(50) NOT NULL,
+  `passport_number` varchar(20) NOT NULL,
   `reason` text DEFAULT NULL,
   `added_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `blacklist`
---
-
-INSERT INTO `blacklist` (`blacklist_id`, `passenger_name`, `passport_number`, `reason`, `added_date`) VALUES
-(2, 'bvfjkdv', '147852369D', 'hacking', '2026-01-03 22:56:29');
 
 -- --------------------------------------------------------
 
@@ -166,8 +159,7 @@ CREATE TABLE `booking` (
   `template_id` int(11) NOT NULL,
   `seat_label` varchar(5) NOT NULL,
   `flight_id` int(11) DEFAULT NULL,
-  `passenger_id` int(11) DEFAULT NULL,
-  `price_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
   `rule_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -175,9 +167,10 @@ CREATE TABLE `booking` (
 -- Dumping data for table `booking`
 --
 
-INSERT INTO `booking` (`booking_id`, `booking_status`, `booking_date`, `template_id`, `seat_label`, `flight_id`, `passenger_id`, `price_id`, `rule_id`) VALUES
-(1, 'Pending', '2026-01-03', 10, '10A', 11, 1, 1, 1),
-(3, 'Pending', '2026-01-04', 20, '20A', 11, 5, 1, 3);
+INSERT INTO `booking` (`booking_id`, `booking_status`, `booking_date`, `template_id`, `seat_label`, `flight_id`, `user_id`, `rule_id`) VALUES
+(28, 'Pending', '2026-01-06', 10, '1A', 14, 19, 1),
+(29, 'Pending', '2026-01-06', 10, '1B', 14, 19, 1),
+(36, 'Pending', '2026-01-06', 10, '1C', 14, 19, 6);
 
 -- --------------------------------------------------------
 
@@ -252,7 +245,11 @@ CREATE TABLE `delay` (
 
 INSERT INTO `delay` (`delay_id`, `flight_id`, `duration`, `reason_code`, `start_time`) VALUES
 (1, 11, '00:00:00', 0, '08:50:00'),
-(2, 12, '00:00:00', 0, '09:30:00');
+(2, 12, '00:00:00', 0, '09:30:00'),
+(3, 21, '00:00:00', 0, '22:46:00'),
+(4, 18, '00:00:00', 0, '02:50:00'),
+(5, 14, '00:00:00', 0, '08:00:00'),
+(6, 19, '00:00:00', 0, '08:00:00');
 
 -- --------------------------------------------------------
 
@@ -271,8 +268,8 @@ CREATE TABLE `delay_reason` (
 --
 
 INSERT INTO `delay_reason` (`reason_code`, `description`, `category`) VALUES
-(1, 'blblblblblblblblaa', 'Weather'),
-(2, 'wowwww', 'Security');
+(1, 'Weather was too much rainy!!!', 'Weather'),
+(2, 'The technical issue will take more time which was not expected!!!', 'Technical');
 
 -- --------------------------------------------------------
 
@@ -300,23 +297,25 @@ CREATE TABLE `flight` (
   `flight_number` varchar(7) NOT NULL,
   `standard_dep_time` time NOT NULL,
   `standard_arr_time` time NOT NULL,
-  `source` varchar(60) NOT NULL,
-  `destination` varchar(60) NOT NULL,
+  `source` int(11) NOT NULL,
+  `destination` int(11) NOT NULL,
   `gate` varchar(6) NOT NULL,
   `fl_status` text NOT NULL,
   `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
-  `airport_id` int(11) NOT NULL,
   `aircraft_id` int(11) NOT NULL,
-  `scheduled_date` date NOT NULL
+  `scheduled_date` date NOT NULL,
+  `scheduled_arr_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `flight`
 --
 
-INSERT INTO `flight` (`flight_id`, `flight_number`, `standard_dep_time`, `standard_arr_time`, `source`, `destination`, `gate`, `fl_status`, `last_updated`, `airport_id`, `aircraft_id`, `scheduled_date`) VALUES
-(11, '1', '08:50:00', '12:12:00', 'banglore', 'thailand', 'G-6', 'Delayed', '2026-01-03 18:44:29', 10, 4, '2026-01-06'),
-(12, '2', '09:30:00', '14:00:00', 'london', 'usa', 'G-6', 'Delayed', '2026-01-03 19:26:04', 10, 4, '2026-01-05');
+INSERT INTO `flight` (`flight_id`, `flight_number`, `standard_dep_time`, `standard_arr_time`, `source`, `destination`, `gate`, `fl_status`, `last_updated`, `aircraft_id`, `scheduled_date`, `scheduled_arr_date`) VALUES
+(14, 'AA1234', '08:00:00', '11:30:00', 10, 12, 'B45', 'Delayed', '2026-01-04 17:46:53', 4, '2026-02-02', '2026-01-05'),
+(18, 'DK-101', '02:50:00', '10:30:00', 10, 12, 'A12', 'Scheduled', '2026-01-04 20:50:14', 4, '2026-02-03', '2026-01-05'),
+(19, 'DK-101', '08:00:00', '10:30:00', 12, 10, 'A12', 'Delayed', '2026-01-04 21:05:32', 4, '2026-01-27', '2026-01-05'),
+(21, '11', '22:46:00', '07:51:00', 13, 12, 'H-7', 'Scheduled', '2026-01-04 22:47:22', 4, '2026-01-20', '2026-01-21');
 
 -- --------------------------------------------------------
 
@@ -351,7 +350,7 @@ CREATE TABLE `flight_track` (
   `flight_id` int(8) NOT NULL,
   `speed` smallint(5) UNSIGNED NOT NULL,
   `altitude` mediumint(8) UNSIGNED NOT NULL,
-  `longtitude` decimal(11,8) NOT NULL,
+  `longitude` decimal(11,8) NOT NULL,
   `latitude` decimal(10,8) NOT NULL,
   `timestamp` datetime(3) NOT NULL,
   `pt_status` varchar(20) NOT NULL,
@@ -379,23 +378,21 @@ CREATE TABLE `maintenance_logs` (
 --
 
 CREATE TABLE `passenger` (
-  `passenger_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `passenger_name` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
   `passport_number` varchar(20) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
-  `d_o_b` datetime NOT NULL,
-  `status` varchar(20) NOT NULL
+  `d_o_b` datetime DEFAULT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'Active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `passenger`
 --
 
-INSERT INTO `passenger` (`passenger_id`, `passenger_name`, `email`, `passport_number`, `phone`, `d_o_b`, `status`) VALUES
-(1, 'ggggggg', 'fff@email.com', '147852369D', '14785236998', '2026-02-04 00:00:00', 'Active'),
-(2, 'bvfjkdv', 'ekjsl@yahoo.com', 'vjnkzxfbv4582', '458745866', '1987-03-24 00:00:00', 'Blacklisted'),
-(5, 'fai', 'fai@gmail.com', '123456789', '123456789', '2007-11-21 00:00:00', 'Active');
+INSERT INTO `passenger` (`user_id`, `passenger_name`, `email`, `passport_number`, `phone`, `d_o_b`, `status`) VALUES
+(19, '', '', 'ASD123456', '+880157896', '2025-01-06 00:00:00', 'Active');
 
 -- --------------------------------------------------------
 
@@ -418,8 +415,7 @@ CREATE TABLE `payment` (
 --
 
 INSERT INTO `payment` (`payment_id`, `booking_id`, `amount`, `pay_status`, `transaction_ref`, `admin_id`, `confirmed_at`) VALUES
-(5, 6, 450.00, 'Confirmed', 'TXN-001-TEST', 1, '2026-01-02 17:16:39'),
-(6, 3, 500.00, 'In_Review', 'TXN-2026-08735DFC', 1, '2026-01-04 00:13:46');
+(18, 20, 900.00, 'Confirmed', 'TXN-3CD7C3CE', 1, '2026-01-05 16:05:52');
 
 -- --------------------------------------------------------
 
@@ -847,9 +843,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `pwd`, `email`, `role`) VALUES
-(1, 'ann', '$2y$12$NqTq3ckJxOzaOA02w/DpHOIzB2hcCf51pRqpZr7sr5G7eC.u6vcnm', 'ann@gmail.com', 'stuff'),
-(2, 'manon', '$2y$12$E./ti3adVbZLtOzY8vVpJuc8NxIoKLMAXeUYXzwCsOvRYXnXJ8IwO', 'manon@gmail.com', 'passenger'),
-(3, 'affy', '$2y$12$ZynDj8PUo1OA/pzYrwBoR.FNWyFjoLFBkqHkietcb.xUmQW/dUDzG', 'affy@gmail.com', 'admin');
+(1, 'mark', '$2y$12$ZZbCvZIAtQTgr3vvKaTbKeDyDAqccW4HymahKiAl/qdwxLcy96nQC', 'admin@gmail.com', 'admin'),
+(19, 'bob', '$2y$10$Nl5WH8x1dvemYmpJ81CmFu2AJUzYSmEkbypPHMT0r60J0ax1JRAaG', 'bob@gmail.com', 'passenger');
 
 --
 -- Indexes for dumped tables
@@ -859,8 +854,7 @@ INSERT INTO `users` (`id`, `username`, `pwd`, `email`, `role`) VALUES
 -- Indexes for table `admin`
 --
 ALTER TABLE `admin`
-  ADD PRIMARY KEY (`admin_id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD PRIMARY KEY (`user_id`);
 
 --
 -- Indexes for table `aircraft`
@@ -903,10 +897,9 @@ ALTER TABLE `blacklist`
 ALTER TABLE `booking`
   ADD PRIMARY KEY (`booking_id`),
   ADD UNIQUE KEY `template_id` (`template_id`,`seat_label`) USING BTREE,
+  ADD KEY `rule_id` (`rule_id`),
   ADD KEY `flight_id` (`flight_id`),
-  ADD KEY `passenger_id` (`passenger_id`),
-  ADD KEY `price_id` (`price_id`),
-  ADD KEY `rule_id` (`rule_id`);
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `crew`
@@ -945,8 +938,9 @@ ALTER TABLE `emergency_reports`
 --
 ALTER TABLE `flight`
   ADD PRIMARY KEY (`flight_id`),
-  ADD KEY `aircraft_id` (`aircraft_id`),
-  ADD KEY `airport_id` (`airport_id`);
+  ADD KEY `destination` (`destination`),
+  ADD KEY `source` (`source`),
+  ADD KEY `aircraft_id` (`aircraft_id`);
 
 --
 -- Indexes for table `flight_delay`
@@ -959,6 +953,7 @@ ALTER TABLE `flight_delay`
 -- Indexes for table `flight_track`
 --
 ALTER TABLE `flight_track`
+  ADD PRIMARY KEY (`pt_id`),
   ADD KEY `flight_id` (`flight_id`);
 
 --
@@ -972,7 +967,7 @@ ALTER TABLE `maintenance_logs`
 -- Indexes for table `passenger`
 --
 ALTER TABLE `passenger`
-  ADD PRIMARY KEY (`passenger_id`);
+  ADD PRIMARY KEY (`user_id`);
 
 --
 -- Indexes for table `payment`
@@ -1019,22 +1014,16 @@ ALTER TABLE `users`
 --
 
 --
--- AUTO_INCREMENT for table `admin`
---
-ALTER TABLE `admin`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
 -- AUTO_INCREMENT for table `aircraft`
 --
 ALTER TABLE `aircraft`
-  MODIFY `aircraft_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `aircraft_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `airport`
 --
 ALTER TABLE `airport`
-  MODIFY `airport_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `airport_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `baggage`
@@ -1046,19 +1035,13 @@ ALTER TABLE `baggage`
 -- AUTO_INCREMENT for table `baggage_claims`
 --
 ALTER TABLE `baggage_claims`
-  MODIFY `claim_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `blacklist`
---
-ALTER TABLE `blacklist`
-  MODIFY `blacklist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `claim_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `crew`
@@ -1076,13 +1059,7 @@ ALTER TABLE `crew_assignment`
 -- AUTO_INCREMENT for table `delay`
 --
 ALTER TABLE `delay`
-  MODIFY `delay_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `delay_reason`
---
-ALTER TABLE `delay_reason`
-  MODIFY `reason_code` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `delay_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `emergency_reports`
@@ -1094,7 +1071,7 @@ ALTER TABLE `emergency_reports`
 -- AUTO_INCREMENT for table `flight`
 --
 ALTER TABLE `flight`
-  MODIFY `flight_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `flight_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `flight_delay`
@@ -1103,22 +1080,22 @@ ALTER TABLE `flight_delay`
   MODIFY `delay_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT for table `flight_track`
+--
+ALTER TABLE `flight_track`
+  MODIFY `pt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `maintenance_logs`
 --
 ALTER TABLE `maintenance_logs`
   MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `passenger`
---
-ALTER TABLE `passenger`
-  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
 -- AUTO_INCREMENT for table `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `pricing_rule`
@@ -1142,7 +1119,7 @@ ALTER TABLE `transit`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- Constraints for dumped tables
@@ -1161,13 +1138,19 @@ ALTER TABLE `baggage_claims`
   ADD CONSTRAINT `baggage_claims_ibfk_1` FOREIGN KEY (`baggage_id`) REFERENCES `baggage` (`baggage_id`);
 
 --
+-- Constraints for table `blacklist`
+--
+ALTER TABLE `blacklist`
+  ADD CONSTRAINT `blacklist_ibfk_1` FOREIGN KEY (`blacklist_id`) REFERENCES `passenger` (`user_id`) ON UPDATE CASCADE;
+
+--
 -- Constraints for table `booking`
 --
 ALTER TABLE `booking`
-  ADD CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`flight_id`) REFERENCES `flight` (`flight_id`),
-  ADD CONSTRAINT `booking_ibfk_2` FOREIGN KEY (`passenger_id`) REFERENCES `passenger` (`passenger_id`),
-  ADD CONSTRAINT `booking_ibfk_3` FOREIGN KEY (`price_id`) REFERENCES `pricing_rule` (`rule_id`),
-  ADD CONSTRAINT `booking_ibfk_4` FOREIGN KEY (`rule_id`) REFERENCES `pricing_rule` (`rule_id`);
+  ADD CONSTRAINT `booking_ibfk_4` FOREIGN KEY (`rule_id`) REFERENCES `pricing_rule` (`rule_id`),
+  ADD CONSTRAINT `booking_ibfk_5` FOREIGN KEY (`flight_id`) REFERENCES `flight` (`flight_id`),
+  ADD CONSTRAINT `booking_ibfk_6` FOREIGN KEY (`template_id`,`seat_label`) REFERENCES `seat_template` (`template_id`, `seat_label`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `booking_ibfk_7` FOREIGN KEY (`user_id`) REFERENCES `passenger` (`user_id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `crew_assignment`
@@ -1176,23 +1159,18 @@ ALTER TABLE `crew_assignment`
   ADD CONSTRAINT `crew_assignment_ibfk_1` FOREIGN KEY (`crew_id`) REFERENCES `crew` (`crew_id`);
 
 --
--- Constraints for table `delay`
+-- Constraints for table `delay_reason`
 --
-ALTER TABLE `delay`
-  ADD CONSTRAINT `delay_ibfk_1` FOREIGN KEY (`flight_id`) REFERENCES `flight` (`flight_id`);
+ALTER TABLE `delay_reason`
+  ADD CONSTRAINT `delay_reason_ibfk_1` FOREIGN KEY (`reason_code`) REFERENCES `delay` (`delay_id`);
 
 --
 -- Constraints for table `flight`
 --
 ALTER TABLE `flight`
-  ADD CONSTRAINT `flight_ibfk_1` FOREIGN KEY (`aircraft_id`) REFERENCES `aircraft` (`aircraft_id`),
-  ADD CONSTRAINT `flight_ibfk_2` FOREIGN KEY (`airport_id`) REFERENCES `airport` (`airport_id`);
-
---
--- Constraints for table `flight_delay`
---
-ALTER TABLE `flight_delay`
-  ADD CONSTRAINT `flight_delay_ibfk_1` FOREIGN KEY (`flight_id`) REFERENCES `flight` (`flight_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `flight_ibfk_1` FOREIGN KEY (`destination`) REFERENCES `airport` (`airport_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `flight_ibfk_2` FOREIGN KEY (`source`) REFERENCES `airport` (`airport_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `flight_ibfk_3` FOREIGN KEY (`aircraft_id`) REFERENCES `aircraft` (`aircraft_id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `maintenance_logs`
@@ -1201,16 +1179,16 @@ ALTER TABLE `maintenance_logs`
   ADD CONSTRAINT `maintenance_logs_ibfk_1` FOREIGN KEY (`aircraft_id`) REFERENCES `aircraft` (`aircraft_id`);
 
 --
+-- Constraints for table `passenger`
+--
+ALTER TABLE `passenger`
+  ADD CONSTRAINT `passenger_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE;
+
+--
 -- Constraints for table `payment`
 --
 ALTER TABLE `payment`
-  ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`) ON UPDATE CASCADE;
-
---
--- Constraints for table `transit`
---
-ALTER TABLE `transit`
-  ADD CONSTRAINT `transit_ibfk_1` FOREIGN KEY (`flight_id`) REFERENCES `flight` (`flight_id`);
+  ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`user_id`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

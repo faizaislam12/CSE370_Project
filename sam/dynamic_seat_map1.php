@@ -115,7 +115,7 @@ $aisle_trigger = ceil($max_seats_in_any_row / 2);
                 <?php if ($is_taken){ ?>
                     <div class="seat taken"><?php echo $s['seat_label']; ?></div>
                 <?php } else{ ?>
-                       <a href="check_login.php?flight_id=<?php echo $flight_id; ?>&seat=<?php echo $s['seat_label']; ?>&rule_id=<?php echo $price_details['rule_id']; ?>&price=<?php echo $final_price; ?>" 
+                       <a href="all_view_bookings.php?flight_id=<?php echo $flight_id; ?>&seat=<?php echo $s['seat_label']; ?>&rule_id=<?php echo $price_details['rule_id']; ?>&price=<?php echo $final_price; ?>" 
                        class="seat <?php echo $display_class; ?>">
                         <?php echo $s['seat_label']; ?>
                         

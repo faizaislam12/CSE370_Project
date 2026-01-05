@@ -13,7 +13,11 @@ if (isset($_GET['pay_id']) && isset($_SESSION['user_id'])) {
     $conn->begin_transaction();
 
     try {
-
+        /**
+         * 1. UPDATE PAYMENT TABLE
+         * Based on your attributes: admin_id (int) and pay_status (varchar)
+         * Note: confirmed_at updates automatically due to ON UPDATE CURRENT_TIMESTAMP
+         */
         $sql1 = "UPDATE payment SET pay_status = 'Confirmed', admin_id = ? WHERE payment_id = ?";
         $stmt_pay = $conn->prepare($sql1);
         
@@ -24,7 +28,10 @@ if (isset($_GET['pay_id']) && isset($_SESSION['user_id'])) {
         $stmt_pay->bind_param("ii", $admin_id_from_session, $payment_id);
         $stmt_pay->execute();
         
-
+        /**
+         * 2. UPDATE BOOKING TABLE
+         * Updates the status to 'Confirmed' for the associated booking
+         */
         $sql2 = "UPDATE booking SET booking_status = 'Confirmed' 
                  WHERE booking_id = (SELECT booking_id FROM payment WHERE payment_id = ? LIMIT 1)";
         $stmt_book = $conn->prepare($sql2);
@@ -36,10 +43,10 @@ if (isset($_GET['pay_id']) && isset($_SESSION['user_id'])) {
         $stmt_book->bind_param("i", $payment_id);
         $stmt_book->execute();
         
-
+        // Everything worked!
         $conn->commit();
 
-   
+        // Redirect back
         header("Location: pay_dashboard.php?msg=success");
         exit();
 
@@ -55,5 +62,4 @@ if (isset($_GET['pay_id']) && isset($_SESSION['user_id'])) {
     // This runs if pay_id is missing or session is dead
     die("Unauthorized Access. Session Status: " . (isset($_SESSION['user_id']) ? "Active" : "Expired"));
 }
-
 ?>
