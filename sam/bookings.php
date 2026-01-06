@@ -3,19 +3,19 @@ include "connection.php";
 
 $message = "";
 
-// 1. CAPTURE DATA FROM THE SEAT SELECTION PAGE (URL PARAMETERS)
+// CAPTURE DATA FROM THE SEAT SELECTION PAGE (URL PARAMETERS)
 $f_id        = isset($_GET['flight_id']) ? (int)$_GET['flight_id'] : 0;
 $s_label     = $_GET['seat'] ?? '';
 $r_id        = isset($_GET['rule_id']) ? (int)$_GET['rule_id'] : 0;
 $final_price = isset($_GET['price']) ? (float)$_GET['price'] : 0.00;
 
-// --- PART 1: HANDLE NEW BOOKING SUBMISSION ---
+// HANDLE NEW BOOKING SUBMISSION 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_booking'])) {
     $p_id = $_POST['user_id'];
-    $f_id = $_POST['flight_id']; // From hidden input
-    $s_label = $_POST['seat_label']; // From hidden input
-    $r_id = $_POST['rule_id']; // From hidden input
-    $final_price = $_POST['price']; // From hidden input
+    $f_id = $_POST['flight_id']; 
+    $s_label = $_POST['seat_label']; 
+    $r_id = $_POST['rule_id']; 
+    $final_price = $_POST['price']; 
     
     $pr_id = 1; 
     $default_admin_id = 1; 
@@ -31,17 +31,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_booking'])) {
     if (!$t_id) {
         $message = "<div class='alert alert-danger'>Error: No aircraft template found for this flight.</div>";
     } else {
-        // 1. Blacklist check
+        
         $check_black = mysqli_query($con, "SELECT status FROM passenger WHERE user_id = $p_id");
         $p_data = mysqli_fetch_assoc($check_black);
 
         if ($p_data['status'] == 'Blacklisted') {
             $message = "<div class='alert alert-danger'>Access Denied: This passenger is blacklisted.</div>";
         } else {
-            // --- START TRANSACTION ---
+            
             mysqli_begin_transaction($con);
             try {
-                // 3. Insert Booking
+                
                 $sql = "INSERT INTO booking (booking_status, booking_date, template_id, seat_label, flight_id, user_id, price_id, rule_id) 
                         VALUES ('Pending', ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = mysqli_prepare($con, $sql);
@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_booking'])) {
                 
                 $new_booking_id = mysqli_insert_id($con);
 
-                // 4. Insert Payment Record
+                
                 $txn_ref = "TXN-2026-" . strtoupper(bin2hex(random_bytes(4)));
                 $sql_pay = "INSERT INTO payment (booking_id, amount, pay_status, transaction_ref, admin_id) 
                             VALUES (?, ?, 'In_Review', ?, ?)";
@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_booking'])) {
     }
 }
 
-// --- PART 2: FETCH DATA FOR VIEWING ---
+
 $bookings = mysqli_query($con, "SELECT b.*, p.passenger_name, f.flight_number 
                                 FROM booking b 
                                 JOIN passenger p ON b.user_id = p.user_id 
@@ -176,4 +176,5 @@ $bookings = mysqli_query($con, "SELECT b.*, p.passenger_name, f.flight_number
         </table>
     </div>
 </body>
+
 </html>
