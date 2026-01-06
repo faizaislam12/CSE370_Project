@@ -1,7 +1,6 @@
 <?php
 require_once "database.php";
 
-// 1. Set your local timezone so NOW() matches your clock
 date_default_timezone_set('Asia/Dhaka'); 
 
 $from = $_GET['from_city'] ?? '';
@@ -35,3 +34,4 @@ if (!empty($from) && !empty($to) && !empty($date)) {
     }
 }
 ?>
+
