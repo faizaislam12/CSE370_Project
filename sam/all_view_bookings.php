@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $message = "";
 
-// 1. Capture data from URL
+// Capture data from URL
 $flight_id   = (int)($_GET['flight_id'] ?? 0);
 $seat_label  = $_GET['seat'] ?? null;
 $rule_id     = (int)($_GET['rule_id'] ?? 0);
@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['submit_booking'])) {
     // Capturing price again from hidden field if necessary
     $f_price = (float)$_POST['price'];
 
-    // 1. Fetch template_id
+    // Fetch template_id
     $temp_query = "SELECT a.template_id FROM flight f 
                    JOIN aircraft a ON f.aircraft_id = a.aircraft_id 
                    WHERE f.flight_id = $f_id";
@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['submit_booking'])) {
     $temp_data = mysqli_fetch_assoc($temp_res);
     $t_id = $temp_data['template_id'] ?? null;
 
-    // 2. VERIFY RULE_ID EXISTS
+    // VERIFY RULE_ID EXISTS
     $rule_check = mysqli_query($con, "SELECT rule_id FROM pricing_rule WHERE rule_id = $r_id");
     
     if (mysqli_num_rows($rule_check) == 0) {
@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['submit_booking'])) {
     } else {
         mysqli_begin_transaction($con);
         try {
-            // Update Passenger Details
+            
             $update_pass = "UPDATE passenger SET 
                             passport_number = '$p_passport', 
                             phone = '$p_phone', 
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['submit_booking'])) {
                             WHERE user_id = '$user_id'";
             mysqli_query($con, $update_pass);
 
-            // Insert Booking
+            
             $sql = "INSERT INTO booking (booking_status, booking_date, template_id, seat_label, flight_id, user_id, rule_id)
                     VALUES ('Pending', CURDATE(), ?, ?, ?, ?, ?)";
 
@@ -70,10 +70,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['submit_booking'])) {
                 throw new Exception("Booking failed: " . mysqli_stmt_error($stmt));
             }
 
-            // --- PAYMENT LOGIC START ---
+            // PAYMENT LOGIC START
             $new_booking_id = mysqli_insert_id($con);
             $txn_ref = "TXN-" . strtoupper(bin2hex(random_bytes(4)));
-            $default_admin_id = 1; // Ensure this admin_id exists in your admin table
+            $default_admin_id = 1;
 
             $sql_pay = "INSERT INTO payment (booking_id, amount, pay_status, transaction_ref, admin_id) 
                         VALUES (?, ?, 'In_Review', ?, ?)";
@@ -84,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['submit_booking'])) {
             if (!mysqli_stmt_execute($stmt2)) {
                 throw new Exception("Payment record failed: " . mysqli_stmt_error($stmt2));
             }
-            // --- PAYMENT LOGIC END ---
+            // ENDOOO
 
             mysqli_commit($con);
             $message = "<div class='alert alert-success'>Booking and Payment successful! Seat $s_label reserved. Ref: $txn_ref</div>";
@@ -138,4 +138,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['submit_booking'])) {
     </form>
 </div>
 </body>
+
 </html>
