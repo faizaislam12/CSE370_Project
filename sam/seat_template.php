@@ -11,7 +11,7 @@ function generateTemplate($conn, $template_id,$rows,$letters,  $bis_rows){
     if ($result->num_rows > 0) {
         echo "Template $template_id already exists. Skipping generation.<br>";
         $checkStmt->close();
-        return; // Exit the function early
+        return; 
     }
     $checkStmt->close();
 
@@ -54,4 +54,5 @@ generateTemplate($conn, 30, 20, ['A', 'B', 'C', 'D', 'E'], 3);
 
 $conn->close();
 ?>
+
 
